@@ -89,6 +89,7 @@ RULES:
 - Output ONLY valid JSON.
 ```
 Ex:
+<img width="623" height="546" alt="image" src="https://github.com/user-attachments/assets/fa26bbc8-e892-4889-9cf3-1a4aa23257af" />
 
 ---
 
@@ -96,7 +97,7 @@ Ex:
 
 Use this as the **Agent Message**:
 
-```md
+```
 Extract the following PDF text and return ONLY the JSON:
 
 ---
@@ -119,7 +120,13 @@ $output.PlaceOfSupply
 $output.HSNCode
 $output.State
 ```
+<img width="574" height="833" alt="image" src="https://github.com/user-attachments/assets/47effefe-05e6-41e5-bd93-f2a4b5ad02de" />
 
+WE CAN DO IT IN 2 WAYS:
+1.you can let the model define:
+<img width="562" height="671" alt="image" src="https://github.com/user-attachments/assets/71589bbd-3e91-4b0a-8c09-89f4852b04fd" />
+
+2.Or we can define it again
 ### Your sheet mapping:
 
 ```
@@ -131,6 +138,7 @@ State → {{ $json["State"] }}
 ```
 
 *(Exactly as you fixed earlier — now stable.)*
+
 
 ---
 
@@ -160,6 +168,8 @@ State: {{ $json["State"] }}
 
 ✔ Row inserted in Google Sheet "Invoice".
 ```
+EX:
+<img width="576" height="808" alt="image" src="https://github.com/user-attachments/assets/8517dca9-5392-4cb6-813c-d6bac680cf4e" />
 
 ---
 
@@ -178,6 +188,8 @@ Append Row in Google Sheets
     ↓  
 Send Gmail Confirmation  
 ```
+Here is my final workflow:
+<img width="1611" height="464" alt="image" src="https://github.com/user-attachments/assets/af8fcfb9-e437-4131-8833-0cf86d106706" />
 
 ---
 
