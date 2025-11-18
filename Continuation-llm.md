@@ -36,11 +36,20 @@ Use **Define Using JSON Schema** and paste this:
 
 This guarantees the LLM **must** return JSON and ONLY JSON.
 
+EX:
+
+<img width="595" height="676" alt="image" src="https://github.com/user-attachments/assets/4835e609-69ef-4317-ae98-a7a57ecd60a3" />
+<img width="601" height="534" alt="image" src="https://github.com/user-attachments/assets/6a2a189e-fe85-424e-a58a-17ddbae25cc9" />
+
+
 ---
 
 ## ✅ 6.2 Connect the Parser to the Basic LLM Chain
 
 In **Basic LLM Chain**:
+EX:
+
+
 
 * **Model →** connect to your DeepSeek Chat Model
 * **Output Parser →** connect to Structured Output Parser
@@ -81,6 +90,9 @@ PDF TEXT:
 {{ $('Execute Command').item.json.stdout }}
 ---
 ```
+EX:
+<img width="654" height="496" alt="image" src="https://github.com/user-attachments/assets/8a0d8b70-8b37-46ad-acdc-1ca33f1010a1" />
+
 
 Enable:
 
@@ -167,6 +179,7 @@ Basic LLM Chain
       ├── HSNCode
       └── State
 ```
+<img width="590" height="832" alt="image" src="https://github.com/user-attachments/assets/71bb9c9a-daa1-4e42-b52e-93dcaba322e9" />
 
 ---
 
@@ -187,6 +200,8 @@ Structured Output Parser
    ↓
 Google Sheets (Append Row)
 ```
+HERE IS MY FINAL WORKFLOW:
+<img width="799" height="305" alt="image" src="https://github.com/user-attachments/assets/21ca5035-488d-416e-a125-b2c519ab1857" />
 
 ---
 
