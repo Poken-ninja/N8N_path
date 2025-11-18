@@ -220,3 +220,121 @@ You now have:
 ✔ End-to-end automated data pipeline
 
 ---
+
+# 📌 Step 11 — Send Confirmation Email (“Updated to Sheets”)
+
+After the Google Sheets node successfully appends the row, we send an automated email notifying that the invoice has been processed and added to the sheet.
+
+This helps you keep track, debug faster, and confirm your pipeline is running end-to-end.
+
+---
+
+## ✅ 11.1 Add the “Send Email” Node
+
+1. Drag **Gmail → Send Email** node
+2. Connect it **after Google Sheets**
+
+Workflow:
+
+```
+Google Sheets (Append Row)
+       ↓
+Send Email
+```
+
+---
+
+## ✅ 11.2 Configure the Email Node
+
+Set these fields:
+
+### **To**
+
+Your email or any tracking email:
+
+```
+yourEmail@gmail.com
+```
+
+### **Subject**
+
+```
+Invoice Updated to Google Sheets
+```
+
+### **Message (HTML / Text)**
+
+Use a dynamic message so you can see exactly what was added.
+
+```
+The invoice extraction and sheet update were completed successfully.
+
+Details added:
+
+Email: {{ $('Basic LLM Chain').item.json.output.Email }}
+Address: {{ $('Basic LLM Chain').item.json.output.Address }}
+Place of Supply: {{ $('Basic LLM Chain').item.json.output.PlaceOfSupply }}
+HSN Code: {{ $('Basic LLM Chain').item.json.output.HSNCode }}
+State: {{ $('Basic LLM Chain').item.json.output.State }}
+
+✔ Successfully added to Google Sheet: "Invoice"
+```
+
+This gives you a beautiful status email every time the automation finishes.
+
+---
+
+## 🧠 11.3 Dynamic Success Message (Optional)
+
+If you want the message to include timestamp:
+
+```
+Completed at: {{ $now }}
+```
+
+If you want the PDF filename included:
+
+```
+PDF File: {{ $('Read/Write Files from Disk').item.binary.attachment_0.fileName }}
+```
+
+---
+
+# 📌 Final Updated Pipeline
+
+```
+Gmail Trigger
+    ↓
+Read/Write Files From Disk
+    ↓
+Execute Command (pdftotext)
+    ↓
+Basic LLM Chain (JSON)
+    ↓
+Structured Output Parser
+    ↓
+Google Sheets (Append Row)
+    ↓
+Send Email (“Updated to Sheets”)
+```
+
+---
+
+# 📌 Final Confirmation Email Example
+
+```
+Subject: Invoice Updated to Google Sheets
+
+The invoice has been processed successfully.
+
+Email: finance@zomato.com
+Address: Pioneer Square...
+Place Of Supply: Telangana (36)
+HSN Code: 999799
+State: Haryana
+
+✔ Successfully updated in Sheet1 (Invoice)
+```
+
+---
+
