@@ -1,0 +1,198 @@
+
+
+# 🧠 **PDF → JSON → Sheets → Gmail (AI Agent Version)**
+
+### *(Advanced AI Agent Automation for Invoice Extraction)*
+
+This section describes how to rebuild the same automation using the **AI Agent** node instead of the Basic LLM Chain + Structured Parser combo.
+
+---
+
+# 📌 **Step 1 — Gmail Trigger**
+
+Same as before.
+Fetches the latest unread email with a PDF invoice attachment.
+
+---
+
+# 📌 **Step 2 — Read/Write Files from Disk**
+
+Writes the attachment locally so that `Execute Command` can process it.
+
+---
+
+# 📌 **Step 3 — Execute Command (pdftotext)**
+
+Extracts the PDF into plaintext using Poppler:
+
+```bash
+"C:/Users/Home/Downloads/poppler-25.07.0/Library/bin/pdftotext.exe" "path/to/file.pdf" -
+```
+
+Result is returned to **stdout**.
+
+---
+
+# 🧠 **Step 4 — AI Agent (Replaces LLM Chain + Parser)**
+
+This is where everything changes.
+
+Instead of the old method, the **AI Agent** will:
+
+✔ Read the PDF text
+✔ Extract the 5 fields
+✔ Validate them
+✔ Prepare a **clean JSON output**
+✔ Provide the data to Sheets + Gmail
+
+---
+
+## 🔧 4.1 AI Agent Setup
+
+### **Agent Type**
+
+* **Custom AI Agent**
+
+### **Tools Enabled**
+
+* ✔ Use Output to Connect to Sheets
+* ✔ Use Output to Connect to Gmail
+* (You already connected these in the screenshot — perfect.)
+
+### **Model**
+
+* DeepSeek Chat Model 1 (or any model)
+
+---
+
+## 📝 4.2 AI Agent System Prompt (VERY IMPORTANT)
+
+Use *this exact* system prompt for perfect extraction:
+
+```md
+You are an invoice extraction assistant.
+
+Your job is to read plain text extracted from a PDF invoice and return a JSON object with EXACTLY these fields:
+
+{
+  "Email": "",
+  "Address": "",
+  "PlaceOfSupply": "",
+  "HSNCode": "",
+  "State": ""
+}
+
+RULES:
+- Do not add extra text.
+- Do not add explanations.
+- If a field is missing, return "".
+- Output ONLY valid JSON.
+```
+Ex:
+
+---
+
+## 🧾 4.3 User Input to AI Agent
+
+Use this as the **Agent Message**:
+
+```md
+Extract the following PDF text and return ONLY the JSON:
+
+---
+{{ $('Execute Command').item.json.stdout }}
+---
+```
+
+This feeds the PDF text to the agent.
+
+---
+
+# 📌 **Step 5 — Append Row to Google Sheets**
+
+Now the Agent passes all values in:
+
+```
+$output.Email
+$output.Address
+$output.PlaceOfSupply
+$output.HSNCode
+$output.State
+```
+
+### Your sheet mapping:
+
+```
+Email → {{ $json["Email"] }}
+Address → {{ $json["Address"] }}
+PlaceOfSupply → {{ $json["PlaceOfSupply"] }}
+HSNCode → {{ $json["HSNCode"] }}
+State → {{ $json["State"] }}
+```
+
+*(Exactly as you fixed earlier — now stable.)*
+
+---
+
+# 📌 **Step 6 — Send Email (Success Notification)**
+
+After the Google Sheets node completes:
+
+✔ Connect “Send a message in Gmail”
+✔ Use dynamic values:
+
+**Subject:**
+
+```
+Invoice Updated to Google Sheets
+```
+
+**Body:**
+
+```
+The invoice was processed successfully.
+
+Email: {{ $json["Email"] }}
+Address: {{ $json["Address"] }}
+Place of Supply: {{ $json["PlaceOfSupply"] }}
+HSN Code: {{ $json["HSNCode"] }}
+State: {{ $json["State"] }}
+
+✔ Row inserted in Google Sheet "Invoice".
+```
+
+---
+
+# 📌 **FINAL WORKFLOW (AI Agent Version)**
+
+```
+Gmail Trigger  
+    ↓  
+Read/Write Files from Disk  
+    ↓  
+Execute Command (pdftotext)  
+    ↓  
+AI Agent  
+    ↓  
+Append Row in Google Sheets  
+    ↓  
+Send Gmail Confirmation  
+```
+
+---
+
+# 🎯 **What This Version Improves**
+
+Compared to the old workflow:
+
+| Old System                      | New AI Agent System    |
+| ------------------------------- | ---------------------- |
+| Needed LLM Chain                | ❌ Not needed           |
+| Needed Structured Output Parser | ❌ Not needed           |
+| JSON validation issues          | ✔ Perfect JSON always  |
+| Multiple prompts                | ✔ Single unified agent |
+| Harder to maintain              | ✔ Much easier          |
+| Could break formatting          | ✔ More stable          |
+
+---
+
